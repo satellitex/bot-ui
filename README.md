@@ -1,5 +1,6 @@
 # bot-ui
 bot の損益などをヴィジュアライズするための web app.
+http://175.41.244.3:443/
 
 # How to run
 ## Using poetry
@@ -33,6 +34,9 @@ docker run -d --restart unless-stopped --mount type=bind,source="$(pwd)"/csv,tar
 
 - in bot-tests
 ```sh
-docker run -d --restart unless-stopped --mount type=bind,source="$(pwd)"/data/log/csv,target=/usr/src/app/csv -e UI_CSV_PATH=csv/kosoku_binance_BTCUSDT_5m_pl.csv  -p 8000:8050 satellitex/bot-web
+docker run -d --restart unless-stopped --mount type=bind,source="$(pwd)"/log/csv,target=/usr/src/app/csv -e UI_CSV_PATH=csv/kosoku_binance_BTCUSDT_5m_pl.csv  -p 443:8050 satellitex/bot-web
 ```
 
+## TODO
+- hover の数値をカンマ区切りにする
+ - https://plotly.com/python/hover-text-and-formatting/

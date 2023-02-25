@@ -3,6 +3,7 @@
 
 import os
 
+import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.graph_objs as go
 from dash import Dash, dcc, html
@@ -11,7 +12,7 @@ from plotly.subplots import make_subplots
 
 load_dotenv(override=True)
 
-app = Dash(__name__)
+app = Dash(__name__, external_stylesheets=[dbc.themes.SIMPLEX])
 
 # assume you have a "long-form" data frame
 # see https://plotly.com/python/px-arguments/ for more options
@@ -46,13 +47,41 @@ def serve_layout():
         specs=[[{"secondary_y": True}]], subplot_titles=["BTCUSDT5m 高速bot の損益"]
     )
     # 1. 残高推移
-    fig.add_trace(go.Scatter(x=df["timestamp"], y=df["balance"], name="balance"))
+    fig.add_trace(
+        go.Scatter(
+            x=df["timestamp"],
+            y=df["balance"],
+            name="balance",
+            hovertemplate="(%{x}, $%{y:,.2f})",
+        )
+    )
     # 2. 理論残高推移
-    fig.add_trace(go.Scatter(x=df["timestamp"], y=df["ideal_balance"], name="ideal"))
+    fig.add_trace(
+        go.Scatter(
+            x=df["timestamp"],
+            y=df["ideal_balance"],
+            name="ideal",
+            hovertemplate="(%{x}, $%{y:,.2f})",
+        )
+    )
     # 3. USD の残高
-    fig.add_trace(go.Scatter(x=df["timestamp"], y=df["usd_pos"], name="usd pos($)"))
+    fig.add_trace(
+        go.Scatter(
+            x=df["timestamp"],
+            y=df["usd_pos"],
+            name="usd pos($)",
+            hovertemplate="(%{x}, $%{y:,.2f})",
+        )
+    )
     # 4. BTC になってる USD の残高(ドル建て) (1) = (3) + (4)
-    fig.add_trace(go.Scatter(x=df["timestamp"], y=df["unusd_pos"], name="btc pos($)"))
+    fig.add_trace(
+        go.Scatter(
+            x=df["timestamp"],
+            y=df["unusd_pos"],
+            name="btc pos($)",
+            hovertemplate="(%{x}, $%{y:,.2f})",
+        )
+    )
     # 5. BTC の価格
     fig.add_trace(
         go.Scatter(
@@ -60,9 +89,12 @@ def serve_layout():
             y=df["btc_price"],
             name="btc price",
             line=dict(color="orange"),
+            hovertemplate="(%{x}, $%{y:,.2f})",
         ),
         secondary_y=True,
     )
+
+    fig.update_traces(mode="markers+lines")
 
     return html.Div(
         children=[
@@ -83,4 +115,4 @@ def serve_layout():
 app.layout = serve_layout
 
 if __name__ == "__main__":
-    app.run_server(host='0.0.0.0', debug=True)
+    app.run_server(host="0.0.0.0", debug=True)
